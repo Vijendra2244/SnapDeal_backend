@@ -112,7 +112,7 @@ const requestForOtp = async (req, res) => {
       service: "gmail",
       auth: {
         user: "vijuuuchouhan@gmail.com",
-        pass: "Vije@8899",
+        pass: "",
       },
     });
 
