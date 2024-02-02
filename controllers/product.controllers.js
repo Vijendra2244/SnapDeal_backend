@@ -22,11 +22,12 @@ const createdProducts = async (req, res) => {
     if (!productImage) {
       throw new Error("avatar file is required>>");
     }
-    const { price, subTitle, category } = req.body;
+    const { price, subtitle, shortDescription,category } = req.body;
     const productDetails = new ProductModel({
       price,
-      subTitle,
+      subtitle,
       category,
+      shortDescription,
       productImage: productImage ? productImage.url : null,
     });
     await productDetails.save();

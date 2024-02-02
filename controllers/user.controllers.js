@@ -2,6 +2,8 @@ const { BlackListModel } = require("../models/blacklist.models");
 const { UserModel } = require("../models/user.models");
 const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const registerUser = async (req, res) => {
   try {
@@ -111,19 +113,20 @@ const requestForOtp = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "vijuuuchouhan@gmail.com",
-        pass: "",
+        user: process.env.USER_EMAIL,
+        pass: process.env.USER_PASS,
       },
     });
 
     const mailOptions = {
-      from: "vijuuuchouhan@gmail.com",
+      from: process.env.USER_EMAIL,
       to: email,
       subject: "OTP Verification",
       text: `Your OTP for email verification is: ${otp}`,
     };
 
     await transporter.sendMail(mailOptions);
+    res.status(201).send({ msg: "opt send " });
   } catch (error) {
     res.status(200).send({ msg: error.message });
   }
