@@ -5,13 +5,17 @@ const productSchema = mongoose.Schema(
     productImage: {
       type: String,
     },
-    subTitle: {
+    subtitle: {
       type: String,
       required: true,
     },
     price: {
       type: String,
       required: true,
+    },
+    shortDescription:{
+      type:String,
+      required:true
     },
     category: {
       type: String,
