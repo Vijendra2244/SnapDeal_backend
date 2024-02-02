@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
-const BlackListModel = require("../models/blacklistmodels");
-const dotenv = require("dotenv")
-dotenv.config()
+const BlackListModel = require("../models/blacklist.models");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const auth = async (req, res, next) => {
   const access_token = req.cookies["access_token"];
@@ -19,25 +19,36 @@ const auth = async (req, res, next) => {
     jwt.verify(access_token, process.env.ACCESS_SECRET_KEY, (err, decoded) => {
       if (err) {
         if (err.message === "jwt expired") {
-          jwt.verify(refresh_token, process.env.REFRESH_SECRET_KEY , async (err, refreshDecoded) => {
-            if (err) {
-              return res
-                .status(400)
-                .send("Refresh token is invalid or expired");
-            } else {
-              const access_token = jwt.sign({  _id: refreshDecoded.userId }, "auth", {
-                expiresIn: "1d",
-              });
+          jwt.verify(
+            refresh_token,
+            process.env.REFRESH_SECRET_KEY,
+            async (err, refreshDecoded) => {
+              if (err) {
+                return res
+                  .status(400)
+                  .send("Refresh token is invalid or expired");
+              } else {
+                const access_token = jwt.sign(
+                  {
+                    userId: refreshDecoded.userId,
+                    username: refreshDecoded.username,
+                  },
+                  process.env.ACCESS_SECRET_KEY,
+                  {
+                    expiresIn: process.env.ACCESS_SECRET_KEY_EXPIRESIN,
+                  }
+                );
 
-              res.cookie("access_token", access_token);
-              res.status(200).send("user access");
-              next();
+                res.cookie("access_token", access_token);
+                res.status(200).send("user access");
+                next();
+              }
             }
-          });
+          );
         }
       } else {
-           req.body.userId= decoded.userId
-           req.body.username = decoded.username
+        req.body.userId = decoded.userId;
+        req.body.username = decoded.username;
         next();
       }
     });
@@ -46,4 +57,4 @@ const auth = async (req, res, next) => {
   }
 };
 
-module.exports ={ auth};
+module.exports = { auth };
