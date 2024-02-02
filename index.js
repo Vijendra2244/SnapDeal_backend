@@ -5,6 +5,8 @@ const { userRouter } = require("./routes/user.routes");
 dotenv.config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const { productRouter } = require("./routes/product.routes");
+const { auth } = require("./middleware/auth.middleware");
 
 const PORT = process.env.PORT;
 
@@ -12,7 +14,13 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(cookieParser());
+app.use(
+  cookieParser({
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  })
+);
 
 app.get("/", (req, res) => {
   try {
@@ -23,6 +31,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/users", userRouter);
+app.use("/products", auth, productRouter);
 
 app.listen(PORT, () => {
   try {

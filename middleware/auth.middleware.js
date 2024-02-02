@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const BlackListModel = require("../models/blacklist.models");
+const{ BlackListModel} = require("../models/blacklist.models");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -9,7 +9,7 @@ const auth = async (req, res, next) => {
 
   try {
     const isBlackListedToken = await BlackListModel.exists({
-      token: access_token,
+      access_token: access_token,
     });
 
     if (isBlackListedToken) {
