@@ -130,7 +130,8 @@ const saveOTPToUserDocument = async (userId, otp) => {
 const requestForOtp = async (req, res) => {
   try {
     const { email } = req.body;
-    console.log(">>>>>>>",process.env.USER_EMAIL,  process.env.USER_PASS )
+    console.log(process.env.USER_PASS)
+    console.log(process.env.USER_EMAIL)
     const findUserWithThisEmail = await UserModel.findOne({ email });
     if (!findUserWithThisEmail) {
       return res.status(400).send({ msg: "User not found by this email" });
