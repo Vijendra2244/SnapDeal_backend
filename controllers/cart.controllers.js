@@ -64,13 +64,27 @@ const updateCart = async (req, res) => {
     }
   };
   
-const deleteCart = async(req,res)=>{
+  const deleteCart = async (req, res) => {
     try {
-        
+      const userId = req.body.userId;
+      const { id } = req.params;
+  
+      const findCartToDelete = await CartModel.findById(id);
+  
+      if (!findCartToDelete) {
+        return res.status(404).send({ msg: "Cart not found" });
+      }
+  
+      if (userId !== findCartToDelete.userId.toString()) {
+        return res.status(403).send({ msg: "You are not authorized to delete this cart" });
+      }
+  
+      await CartModel.findByIdAndDelete(id);
+      res.status(200).send({ msg: "Cart deleted successfully" });
     } catch (error) {
-        
+      res.status(400).send({ msg: error.message });
     }
-}
-
+  };
+  
 
 module.exports = {getAllCart,createCart,updateCart,deleteCart}
