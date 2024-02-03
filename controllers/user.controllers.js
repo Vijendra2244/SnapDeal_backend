@@ -27,7 +27,8 @@ const registerUser = async (req, res) => {
     }
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
-   
+    console.log(avatar)
+    console.log(avatar.url)
     if (!avatar) {
       throw new Error("avatar file is required>>");
     }
