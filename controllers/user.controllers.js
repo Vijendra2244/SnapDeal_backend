@@ -26,19 +26,19 @@ const registerUser = async (req, res) => {
       throw new Error("avatar file is required");
     }
 
-    const avatar = await uploadOnCloudinary(avatarLocalPath);
-    console.log(avatar)
-    console.log(avatar.url)
-    if (!avatar) {
-      throw new Error("avatar file is required>>");
-    }
+    // const avatar = await uploadOnCloudinary(avatarLocalPath);
+    // console.log(avatar)
+    // console.log(avatar.url)
+    // if (!avatar) {
+    //   throw new Error("avatar file is required>>");
+    // }
 
     const user = new UserModel({
       username,
       email,
       password,
       mobilenumber,
-      avatar: avatar ? avatar.url:null,
+      // avatar: avatar ? avatar.url:null,
     });
     await user.save();
     res.status(200).send({ msg: "User has been created successfully" });
