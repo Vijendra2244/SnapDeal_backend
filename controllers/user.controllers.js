@@ -35,7 +35,7 @@ const registerUser = async (req, res) => {
       email,
       password,
       mobilenumber,
-       avatar: avatar ? avatar.url : null,
+      avatar: avatar ? avatar.url : null,
     });
     await user.save();
     res.status(200).send({ msg: "User has been created successfully" });
