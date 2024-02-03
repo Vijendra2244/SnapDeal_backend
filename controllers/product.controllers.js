@@ -13,7 +13,6 @@ const getAllProducts = async (req, res) => {
 const createdProducts = async (req, res) => {
   try {
     const productImageLocalPath = req.file?.path;
-    console.log(productImageLocalPath)
     if (!productImageLocalPath) {
       throw new Error("product image file is required");
     }

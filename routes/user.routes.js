@@ -8,11 +8,11 @@ const {
   otpVerify,
   forgetPassword,
 } = require("../controllers/user.controllers");
-
+const {upload}  =require("../middleware/multer.middleware")
 
 const userRouter = express.Router();
 
-userRouter.route("/register").post(registerUser);
+userRouter.route("/register").post(upload.single("avatar"),registerUser);
 userRouter.route("/login").post(loginUser);
 userRouter.route("/logout").post(logoutUser);
 userRouter.route("/resetpassword").post(resetPassword);

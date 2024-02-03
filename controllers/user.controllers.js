@@ -19,26 +19,24 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // const avatarLocalPath = req.file?.path;
-    // console.log(req.file)
-    // console.log(avatarLocalPath)
-    // if (!avatarLocalPath) {
-    //   throw new Error("avatar file is required");
-    // }
+    const avatarLocalPath = req.file?.path;
+    console.log(req.file)
+    console.log(avatarLocalPath)
+    if (!avatarLocalPath) {
+      throw new Error("avatar file is required");
+    }
 
-    // const avatar = await uploadOnCloudinary(avatarLocalPath);
-    // console.log(avatar)
-    // console.log(avatar.url)
-    // if (!avatar) {
-    //   throw new Error("avatar file is required>>");
-    // }
+    const avatar = await uploadOnCloudinary(avatarLocalPath)
+    if (!avatar) {
+      throw new Error("avatar file is required>>");
+    }
 
     const user = new UserModel({
       username,
       email,
       password,
       mobilenumber,
-      // avatar: avatar ? avatar.url:null,
+      avatar: avatar ? avatar.url:null,
     });
     await user.save();
     res.status(200).send({ msg: "User has been created successfully" });
@@ -130,11 +128,6 @@ const saveOTPToUserDocument = async (userId, otp) => {
 const requestForOtp = async (req, res) => {
   try {
     const { email } = req.body;
-  
-console.log(process.env.ACCESS_SECRET_KEY )
-console.log(process.env.REFRESH_SECRET_KEY ) 
-console.log(process.env.ACCESS_SECRET_KEY_EXPIRESIN )
-console.log(process.env.REFRESH_SECRET_KEY_EXPIRESIN)
     const findUserWithThisEmail = await UserModel.findOne({ email });
     if (!findUserWithThisEmail) {
       return res.status(400).send({ msg: "User not found by this email" });
