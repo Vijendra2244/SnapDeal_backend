@@ -19,12 +19,12 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const avatarLocalPath = req.file?.path;
-    console.log(req.file)
-    console.log(avatarLocalPath)
-    if (!avatarLocalPath) {
-      throw new Error("avatar file is required");
-    }
+    // const avatarLocalPath = req.file?.path;
+    // console.log(req.file)
+    // console.log(avatarLocalPath)
+    // if (!avatarLocalPath) {
+    //   throw new Error("avatar file is required");
+    // }
 
     // const avatar = await uploadOnCloudinary(avatarLocalPath);
     // console.log(avatar)
