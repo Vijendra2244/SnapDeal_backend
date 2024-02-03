@@ -25,9 +25,9 @@ const userSchema = mongoose.Schema(
     otp: {
       type: String,
     },
-    avatar: {
-      type: String,
-    },
+    // avatar: {
+    //   type: String,
+    // },
   },
   { versionKey: false }
 );
