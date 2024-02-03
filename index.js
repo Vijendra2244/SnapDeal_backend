@@ -14,7 +14,16 @@ const PORT = process.env.PORT;
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://127.0.0.1:5173",
+      "https://snapdealbackend-production.up.railway.app",
+      "https://snapdeal0101.netlify.app",
+    ],
+    credentials: true,
+  })
+);
 app.use(
   cookieParser({
     httpOnly: true,
@@ -33,7 +42,7 @@ app.get("/", (req, res) => {
 
 app.use("/users", userRouter);
 app.use("/products", auth, productRouter);
-app.use("/carts",auth,cartRouter)
+app.use("/carts", auth, cartRouter);
 
 app.listen(PORT, () => {
   try {

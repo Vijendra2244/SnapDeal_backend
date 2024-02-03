@@ -3,12 +3,40 @@ const { UserModel } = require("../models/user.models");
 const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
+const { uploadOnCloudinary } = require("../utils/cloudinary.utils");
 dotenv.config();
 
 const registerUser = async (req, res) => {
   try {
     const { username, email, password, mobilenumber } = req.body;
-    const user = new UserModel({ username, email, password, mobilenumber });
+
+    const passwordValidation =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordMatchedOrNot = passwordValidation.test(password);
+    if (!passwordMatchedOrNot) {
+      return res.status(401).send({
+        msg: "Password must have at least one uppercase character, one number, one special character, and be at least 8 characters long.",
+      });
+    }
+
+    const avatarLocalPath = req.file?.path;
+    if (!avatarLocalPath) {
+      throw new Error("avatar file is required");
+    }
+
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+    if (!avatar) {
+      throw new Error("avatar file is required>>");
+    }
+
+    const user = new UserModel({
+      username,
+      email,
+      password,
+      mobilenumber,
+      avatar: avatar ? avatar.url : null,
+    });
     await user.save();
     res.status(200).send({ msg: "User has been created successfully" });
   } catch (error) {
@@ -143,7 +171,6 @@ const otpVerify = async (req, res) => {
       });
     }
     const otpWhichIsStoreInUserDocument = otpFindInUserModel[0].otp;
-  
 
     if (otpWhichIsStoreInUserDocument == otp) {
       return res.status(201).send({ msg: "Otp verified successfully" });
