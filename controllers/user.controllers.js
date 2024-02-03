@@ -130,9 +130,11 @@ const saveOTPToUserDocument = async (userId, otp) => {
 const requestForOtp = async (req, res) => {
   try {
     const { email } = req.body;
-    console.log(process.env.CLOUD_NAME);
-    console.log(process.env.API_KEY);
-    console.log(process.env.API_SECRET);
+  
+console.log(process.env.ACCESS_SECRET_KEY )
+console.log(process.env.REFRESH_SECRET_KEY ) 
+console.log(process.env.ACCESS_SECRET_KEY_EXPIRESIN )
+console.log(process.env.REFRESH_SECRET_KEY_EXPIRESIN)
     const findUserWithThisEmail = await UserModel.findOne({ email });
     if (!findUserWithThisEmail) {
       return res.status(400).send({ msg: "User not found by this email" });
