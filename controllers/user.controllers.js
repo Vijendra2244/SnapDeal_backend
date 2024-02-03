@@ -3,7 +3,7 @@ const { UserModel } = require("../models/user.models");
 const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
-const { uploadOnCloudinary } = require("../utils/cloudinary.utils");
+const { uploadOnCloudinary } = require("../utils/cloudinary.utils.js");
 dotenv.config();
 
 const registerUser = async (req, res) => {
