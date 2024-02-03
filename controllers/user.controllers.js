@@ -130,9 +130,9 @@ const saveOTPToUserDocument = async (userId, otp) => {
 const requestForOtp = async (req, res) => {
   try {
     const { email } = req.body;
-    console.log(process.env.USER_PASS)
-    console.log(process.env.USER_EMAIL)
-    console.log(process.env.MONGODB_URL)
+    console.log(process.env.CLOUD_NAME);
+    console.log(process.env.API_KEY);
+    console.log(process.env.API_SECRET);
     const findUserWithThisEmail = await UserModel.findOne({ email });
     if (!findUserWithThisEmail) {
       return res.status(400).send({ msg: "User not found by this email" });
@@ -146,14 +146,14 @@ const requestForOtp = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user:"vs230267@gmail.com",
-        pass: "ogucyjxioyzucwjq",
+        user: process.env.USER_EMAIL,
+        pass: process.env.USER_PASS,
       },
     });
 
     const mailOptions = {
-      from: "vs230267@gmail.com",
-      to: "vijuuuchouhan@gmail.com",
+      from: process.env.USER_EMAIL,
+      to: email,
       subject: "OTP Verification",
       text: `Your OTP for email verification is: ${otp}`,
     };
