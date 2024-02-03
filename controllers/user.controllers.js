@@ -28,16 +28,16 @@ const registerUser = async (req, res) => {
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
    
-    // if (!avatar) {
-    //   throw new Error("avatar file is required>>");
-    // }
+    if (!avatar) {
+      throw new Error("avatar file is required>>");
+    }
 
     const user = new UserModel({
       username,
       email,
       password,
       mobilenumber,
-      avatar: avatar,
+      avatar: avatar ? avatar.url:null,
     });
     await user.save();
     res.status(200).send({ msg: "User has been created successfully" });
