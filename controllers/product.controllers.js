@@ -14,13 +14,13 @@ const createdProducts = async (req, res) => {
   try {
     const productLocalPath = req.file?.path;
     if (!productLocalPath) {
-      throw new Error("<< avatar file is required");
+      throw new Error("product image file is required");
     }
 
     const productImage = await uploadOnCloudinary(productLocalPath);
 
     if (!productImage) {
-      throw new Error("avatar file is required>>");
+      throw new Error("product image file is required");
     }
     const { price, subtitle, shortDescription,category } = req.body;
     const productDetails = new ProductModel({

@@ -22,9 +22,12 @@ const userSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-  otp:{
-    type:String
-  }
+    otp: {
+      type: String,
+    },
+    avatar: {
+      type: String,
+    },
   },
   { versionKey: false }
 );
