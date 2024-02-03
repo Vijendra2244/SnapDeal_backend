@@ -132,10 +132,52 @@ const requestForOtp = async (req, res) => {
   }
 };
 
+const otpVerify = async (req, res) => {
+  try {
+    const { otp, email } = req.body;
+    const otpFindInUserModel = await UserModel.find({ email });
+
+    if (!otpFindInUserModel) {
+      return res.status(400).send({
+        msg: "User with this email not found please enter your correct mail",
+      });
+    }
+    const otpWhichIsStoreInUserDocument = otpFindInUserModel[0].otp;
+  
+
+    if (otpWhichIsStoreInUserDocument == otp) {
+      return res.status(201).send({ msg: "Otp verified successfully" });
+    } else {
+      return res
+        .status(401)
+        .send({ msg: "Invalid otp please enter correct otp" });
+    }
+  } catch (error) {
+    res.status(200).send({ msg: error.message });
+  }
+};
+
+const forgetPassword = async (req, res) => {
+  try {
+    const { newPassword, email } = req.body;
+    const findUserWithEmail = await UserModel.findOne({ email });
+    if (!findUserWithEmail) {
+      return res.status(400).send({ msg: "User not found" });
+    }
+    findUserWithEmail.password = newPassword;
+    await findUserWithEmail.save();
+    res.status(201).send({ mag: "Password reset successfully" });
+  } catch (error) {
+    res.status(200).send({ msg: error.message });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   logoutUser,
   resetPassword,
   requestForOtp,
+  otpVerify,
+  forgetPassword,
 };
