@@ -7,6 +7,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { productRouter } = require("./routes/product.routes");
 const { auth } = require("./middleware/auth.middleware");
+const { cartRouter } = require("./routes/cart.routes");
 
 const PORT = process.env.PORT;
 
@@ -32,6 +33,7 @@ app.get("/", (req, res) => {
 
 app.use("/users", userRouter);
 app.use("/products", auth, productRouter);
+app.use("/carts",auth,cartRouter)
 
 app.listen(PORT, () => {
   try {
