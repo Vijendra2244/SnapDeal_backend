@@ -12,23 +12,24 @@ const getAllProducts = async (req, res) => {
 
 const createdProducts = async (req, res) => {
   try {
-    const productLocalPath = req.file?.path;
-    if (!productLocalPath) {
+    const productImageLocalPath = req.file?.path;
+    console.log(productImageLocalPath)
+    if (!productImageLocalPath) {
       throw new Error("product image file is required");
     }
 
-    const productImage = await uploadOnCloudinary(productLocalPath);
+    const productImage = await uploadOnCloudinary(productImageLocalPath);
 
     if (!productImage) {
       throw new Error("product image file is required");
     }
-    const { price, subtitle, shortDescription,category } = req.body;
+    const { price, subtitle, shortDescription, category } = req.body;
     const productDetails = new ProductModel({
       price,
       subtitle,
       category,
       shortDescription,
-      productImage: productImage ? productImage.url : null,
+      productImage: productImage ? productImage.url:null,
     });
     await productDetails.save();
     res
@@ -59,12 +60,10 @@ const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const findDataToDelete = await findByIdAndDelete({ _id: id });
-    res
-      .status(200)
-      .send({
-        msg: "Product deleted successfully",
-        data: { findDataToDelete },
-      });
+    res.status(200).send({
+      msg: "Product deleted successfully",
+      data: { findDataToDelete },
+    });
   } catch (error) {
     res.status(400).send({ msg: error.message });
   }
