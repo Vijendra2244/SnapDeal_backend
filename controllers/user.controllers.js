@@ -132,6 +132,7 @@ const requestForOtp = async (req, res) => {
     const { email } = req.body;
     console.log(process.env.USER_PASS)
     console.log(process.env.USER_EMAIL)
+    console.log(process.env.MONGODB_URL)
     const findUserWithThisEmail = await UserModel.findOne({ email });
     if (!findUserWithThisEmail) {
       return res.status(400).send({ msg: "User not found by this email" });
