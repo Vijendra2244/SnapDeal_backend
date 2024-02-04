@@ -54,7 +54,7 @@ userSchema.methods.generateAccessToken = function () {
       username: this.username,
     },
     process.env.ACCESS_SECRET_KEY,
-    { expiresIn: "1d" }
+    { expiresIn: ACCESS_SECRET_KEY_EXPIRESIN }
   );
 };
 
@@ -62,7 +62,7 @@ userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     { userId: this._id, username: this.username },
     process.env.REFRESH_SECRET_KEY,
-    { expiresIn:"7d" }
+    { expiresIn: REFRESH_SECRET_KEY_EXPIRESIN }
   );
 };
 
