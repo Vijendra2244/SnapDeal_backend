@@ -24,7 +24,7 @@ const registerUser = async (req, res) => {
       throw new Error("avatar file is required");
     }
 
-    const avatar = await uploadOnCloudinary(avatarLocalPath)
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
     if (!avatar) {
       throw new Error("avatar file is required>>");
     }
@@ -34,7 +34,7 @@ const registerUser = async (req, res) => {
       email,
       password,
       mobilenumber,
-      avatar: avatar ? avatar.url:null,
+      avatar: avatar ? avatar.url : null,
     });
     await user.save();
     res.status(200).send({ msg: "User has been created successfully" });
@@ -64,10 +64,11 @@ const loginUser = async (req, res) => {
     res.cookie("refresh_token", refresh_token);
 
     res.status(200).send({
+      status: "success",
       msg: "User login successfully",
     });
   } catch (error) {
-    res.status(400).send({ msg: error.message });
+    res.status(400).send({ status: "fail", msg: error.message });
   }
 };
 
