@@ -41,7 +41,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/users", userRouter);
-app.use("/products", auth, productRouter);
+app.use("/products", productRouter);
 app.use("/carts", auth, cartRouter);
 
 app.listen(PORT, () => {
