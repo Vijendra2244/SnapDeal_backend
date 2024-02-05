@@ -6,7 +6,6 @@ dotenv.config();
 const auth = async (req, res, next) => {
   const access_token = req.cookies["access_token"];
   const refresh_token = req.cookies["refresh_token"];
-
   try {
     const isBlackListedToken = await BlackListModel.exists({
       access_token: access_token,
@@ -35,12 +34,11 @@ const auth = async (req, res, next) => {
                   },
                   process.env.ACCESS_SECRET_KEY,
                   {
-                    expiresIn: "1d",
+                    expiresIn: process.env.ACCESS_SECRET_KEY_EXPIRESIN,
                   }
                 );
 
                 res.cookie("access_token", access_token);
-                res.status(200).send("user access");
                 next();
               }
             }
