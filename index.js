@@ -34,9 +34,9 @@ app.use(
 
 app.get("/", (req, res) => {
   try {
-    res.status(200).send({ mag: "Home page" });
+    res.status(200).send({status:"success", msg: "Home page of snapdeal" });
   } catch (error) {
-    res.status(400).send({ err: error.message });
+    res.status(400).send({status:"fail", err: error.message });
   }
 });
 

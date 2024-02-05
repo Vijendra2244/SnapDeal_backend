@@ -8,6 +8,10 @@ const cartSchema = mongoose.Schema(
     username: {
       type: String,
     },
+    productId: {
+      type: mongoose.Types.ObjectId,
+      ref: "Product"
+    }
   },
   { versionKey: false }
 );

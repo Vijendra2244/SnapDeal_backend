@@ -15,18 +15,23 @@ const registerUser = async (req, res) => {
     const passwordMatchedOrNot = passwordValidation.test(password);
     if (!passwordMatchedOrNot) {
       return res.status(401).send({
+        status: "fail password",
         msg: "Password must have at least one uppercase character, one number, one special character, and be at least 8 characters long.",
       });
     }
 
     const avatarLocalPath = req.file?.path;
     if (!avatarLocalPath) {
-      throw new Error("avatar file is required");
+      return res
+        .status(401)
+        .send({ status: "fail avatar", msg: "Avatar file is required" });
     }
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     if (!avatar) {
-      throw new Error("avatar file is required>>");
+      return res
+        .status(401)
+        .send({ status: "fail avatar", msg: "Avatar file is required" });
     }
 
     const user = new UserModel({
@@ -37,9 +42,11 @@ const registerUser = async (req, res) => {
       avatar: avatar ? avatar.url : null,
     });
     await user.save();
-    res.status(200).send({ msg: "User has been created successfully" });
+    res
+      .status(200)
+      .send({ status: "success", msg: "User has been created successfully" });
   } catch (error) {
-    res.status(400).send({ msg: error.message });
+    res.status(400).send({ status: "fail", msg: error.message });
   }
 };
 
@@ -54,7 +61,9 @@ const loginUser = async (req, res) => {
     );
 
     if (!passwordValidation) {
-      return res.status(401).send({ mag: "Password is incorrect" });
+      return res
+        .status(401)
+        .send({ status: "fail", msg: "Password is incorrect" });
     }
 
     const access_token = await findUserWithMail.generateAccessToken();
@@ -78,14 +87,18 @@ const logoutUser = async (req, res) => {
     const findToken = await BlackListModel.find({ access_token });
 
     if (findToken.length > 0) {
-      return res.status(401).send({ msg: "You are already logged out" });
+      return res
+        .status(401)
+        .send({ status: "fail", msg: "You are already logged out" });
     }
 
     const blackListToken = new BlackListModel({ access_token });
     await blackListToken.save();
-    res.status(200).send({ msg: "User logged out successfully" });
+    res
+      .status(200)
+      .send({ status: "success", msg: "User logged out successfully" });
   } catch (error) {
-    res.status(400).send({ msg: error.message });
+    res.status(400).send({ status: "fail", msg: error.message });
   }
 };
 
@@ -95,21 +108,25 @@ const resetPassword = async (req, res) => {
     const findUserForResetPassword = await UserModel.findOne({ email });
 
     if (!findUserForResetPassword) {
-      return res.status(401).send({ msg: "User not found" });
+      return res.status(401).send({ status: "fail", msg: "User not found" });
     }
 
     const oldPasswordValidation =
       await findUserForResetPassword.comparePasswordIsSame(oldPassword);
 
     if (!oldPasswordValidation) {
-      return res.status(401).send({ msg: "Your old password is incorrect" });
+      return res
+        .status(401)
+        .send({ status: "fail", msg: "Your old password is incorrect" });
     }
 
     findUserForResetPassword.password = newPassword;
     await findUserForResetPassword.save({ validateBeforeSave: false });
-    res.status(201).send({ mag: "Your password changed successfully" });
+    res
+      .status(201)
+      .send({ status: "success", msg: "Your password changed successfully" });
   } catch (error) {
-    res.status(400).send({ msg: error.message });
+    res.status(400).send({ status: "fail", msg: error.message });
   }
 };
 
@@ -129,7 +146,9 @@ const requestForOtp = async (req, res) => {
     const { email } = req.body;
     const findUserWithThisEmail = await UserModel.findOne({ email });
     if (!findUserWithThisEmail) {
-      return res.status(400).send({ msg: "User not found by this email" });
+      return res
+        .status(400)
+        .send({ status: "fail", msg: "User not found by this email" });
     }
 
     //now generate otp
@@ -153,9 +172,9 @@ const requestForOtp = async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
-    res.status(201).send({ msg: "opt send " });
+    res.status(201).send({ status: "success", msg: "opt send " });
   } catch (error) {
-    res.status(200).send({ msg: error.message });
+    res.status(200).send({ status: "fail", msg: error.message });
   }
 };
 
@@ -166,20 +185,23 @@ const otpVerify = async (req, res) => {
 
     if (!otpFindInUserModel) {
       return res.status(400).send({
+        status: "success",
         msg: "User with this email not found please enter your correct mail",
       });
     }
     const otpWhichIsStoreInUserDocument = otpFindInUserModel[0].otp;
 
     if (otpWhichIsStoreInUserDocument == otp) {
-      return res.status(201).send({ msg: "Otp verified successfully" });
+      return res
+        .status(201)
+        .send({ status: "success", msg: "Otp verified successfully" });
     } else {
       return res
         .status(401)
-        .send({ msg: "Invalid otp please enter correct otp" });
+        .send({ status: "fail", msg: "Invalid otp please enter correct otp" });
     }
   } catch (error) {
-    res.status(200).send({ msg: error.message });
+    res.status(200).send({ status: "fail", msg: error.message });
   }
 };
 
@@ -188,13 +210,15 @@ const forgetPassword = async (req, res) => {
     const { newPassword, email } = req.body;
     const findUserWithEmail = await UserModel.findOne({ email });
     if (!findUserWithEmail) {
-      return res.status(400).send({ msg: "User not found" });
+      return res.status(400).send({ status: "fail", msg: "User not found" });
     }
     findUserWithEmail.password = newPassword;
     await findUserWithEmail.save();
-    res.status(201).send({ mag: "Password reset successfully" });
+    res
+      .status(201)
+      .send({ status: "success", msg: "Password reset successfully" });
   } catch (error) {
-    res.status(200).send({ msg: error.message });
+    res.status(200).send({ status: "fail", msg: error.message });
   }
 };
 

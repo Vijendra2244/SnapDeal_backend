@@ -12,7 +12,7 @@ const auth = async (req, res, next) => {
     });
 
     if (isBlackListedToken) {
-      return res.status(400).send("Token is expired, please login again");
+      return res.status(400).send({status:"fail",msg:"Token is blacklisted,please login again"});
     }
 
     jwt.verify(access_token, process.env.ACCESS_SECRET_KEY, (err, decoded) => {
@@ -25,7 +25,7 @@ const auth = async (req, res, next) => {
               if (err) {
                 return res
                   .status(400)
-                  .send("Refresh token is invalid or expired");
+                  .send({status:"fail",msg:"Refresh token is invalid or expired please login again"});
               } else {
                 const access_token = jwt.sign(
                   {
@@ -51,7 +51,7 @@ const auth = async (req, res, next) => {
       }
     });
   } catch (error) {
-    res.status(400).send("Please login again");
+    res.status(400).send({status:"fail",msg:"Please login again"});
   }
 };
 

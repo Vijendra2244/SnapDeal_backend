@@ -4,9 +4,15 @@ const { uploadOnCloudinary } = require("../utils/cloudinary.utils");
 const getAllProducts = async (req, res) => {
   try {
     const products = await ProductModel.find();
-    res.status(200).send({ msg: "Get all products data", data: { products } });
+    res
+      .status(200)
+      .send({
+        status: "success",
+        msg: "Get all products data",
+        data: { products },
+      });
   } catch (error) {
-    res.status(400).send({ msg: error.message });
+    res.status(400).send({ status: "fail", msg: error.message });
   }
 };
 
@@ -14,13 +20,17 @@ const createdProducts = async (req, res) => {
   try {
     const productImageLocalPath = req.file?.path;
     if (!productImageLocalPath) {
-      throw new Error("product image file is required");
+      return res
+        .status(401)
+        .send({ status: "success", msg: "Product image is required" });
     }
 
     const productImage = await uploadOnCloudinary(productImageLocalPath);
 
     if (!productImage) {
-      throw new Error("product image file is required");
+      return res
+        .status(401)
+        .send({ status: "success", msg: "Product image is required" });
     }
     const { price, subtitle, shortDescription, category } = req.body;
     const productDetails = new ProductModel({
@@ -28,14 +38,18 @@ const createdProducts = async (req, res) => {
       subtitle,
       category,
       shortDescription,
-      productImage: productImage ? productImage.url:null,
+      productImage: productImage ? productImage.url : null,
     });
     await productDetails.save();
     res
       .status(200)
-      .send({ mag: "Product added successfully", data: { productDetails } });
+      .send({
+        status: "success",
+        msg: "Product added successfully",
+        data: { productDetails },
+      });
   } catch (error) {
-    res.status(400).send({ msg: error.message });
+    res.status(400).send({ status: "fail", msg: error.message });
   }
 };
 
@@ -49,9 +63,13 @@ const updateProducts = async (req, res) => {
     );
     res
       .status(201)
-      .send({ msg: "Product updated succeefullt", data: { products } });
+      .send({
+        status: "success",
+        msg: "Product updated successfully",
+        data: { products },
+      });
   } catch (error) {
-    res.status(400).send({ msg: error.message });
+    res.status(400).send({ status: "fail", msg: error.message });
   }
 };
 
@@ -60,11 +78,12 @@ const deleteProduct = async (req, res) => {
     const { id } = req.params;
     const findDataToDelete = await findByIdAndDelete({ _id: id });
     res.status(200).send({
+      status: "success",
       msg: "Product deleted successfully",
       data: { findDataToDelete },
     });
   } catch (error) {
-    res.status(400).send({ msg: error.message });
+    res.status(400).send({ status: "fail", msg: error.message });
   }
 };
 module.exports = {
