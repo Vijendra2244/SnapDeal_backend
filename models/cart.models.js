@@ -1,18 +1,11 @@
 const mongoose = require("mongoose");
 
 const cartSchema = mongoose.Schema(
-  {
-    userId: {
-      type: String,
-    },
-    username: {
-      type: String,
-    },
-    productId: {
-      type: mongoose.Types.ObjectId,
-      ref: "Product"
-    }
-  },
+ {
+  userId:{type:mongoose.Types.ObjectId},
+  productId:{type:mongoose.Types.ObjectId},
+  isRemove:{type:Boolean}
+ },
   { versionKey: false }
 );
 

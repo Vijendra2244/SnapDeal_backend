@@ -89,9 +89,9 @@ const loginUser = async (req, res) => {
 const logoutUser = async (req, res) => {
   try {
     const access_token = req.cookies["access_token"];
-    const findToken = await BlackListModel.find({ access_token });
+    const findToken = await BlackListModel.findOne({ access_token });
 
-    if (findToken.length > 0) {
+    if (findToken) {
       return res
         .status(401)
         .send({ status: "fail", msg: "You are already logged out" });

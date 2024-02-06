@@ -4,17 +4,18 @@ const { UserModel } = require("../models/user.models");
 const getAllCart = async (req, res) => {
   try {
     const userId = req.body.userId;
+    console.log(userId)
 
     const findUserIdInCartModel = await CartModel.find({ userId });
 
-    if (findUserIdInCartModel.length === 0) {
-      return res
-        .status(401)
-        .send({
-          status: "fail",
-          msg: "You need to add your cart in cartModel",
-        });
-    }
+    // if (findUserIdInCartModel.length === 0) {
+    //   return res
+    //     .status(401)
+    //     .send({
+    //       status: "fail",
+    //       msg: "You need to add your cart in cartModel",
+    //     });
+    // }
 
     const currentUserId = findUserIdInCartModel[0].userId;
     if (currentUserId !== userId) {
