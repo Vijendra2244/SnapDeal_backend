@@ -15,6 +15,13 @@ const app = express();
 
 app.use(express.json());
 app.use(
+  cookieParser({
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  })
+);
+app.use(
   cors({
     origin: [
       "http://127.0.0.1:5173",
@@ -24,19 +31,12 @@ app.use(
     credentials: true,
   })
 );
-app.use(
-  cookieParser({
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  })
-);
 
 app.get("/", (req, res) => {
   try {
-    res.status(200).send({status:"success", msg: "Home page of snapdeal" });
+    res.status(200).send({ status: "success", msg: "Home page of snapdeal" });
   } catch (error) {
-    res.status(400).send({status:"fail", err: error.message });
+    res.status(400).send({ status: "fail", err: error.message });
   }
 });
 
