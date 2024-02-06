@@ -94,7 +94,7 @@ const logoutUser = async (req, res) => {
     if (findToken) {
       return res
         .status(401)
-        .send({ status: "fail", msg: "You are already logged out" });
+        .send({ status: "allready", msg: "You are already logged out" });
     }
 
     const blackListToken = new BlackListModel({ access_token });
