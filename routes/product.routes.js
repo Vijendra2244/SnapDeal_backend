@@ -10,7 +10,7 @@ const { auth } = require("../middleware/auth.middleware");
 
 const productRouter = express.Router();
 
-productRouter.route("/").get(getAllProducts);
+productRouter.route("/").get(auth,getAllProducts);
 productRouter
   .route("/create")
   .post(upload.single("productImage"), auth, createdProducts);

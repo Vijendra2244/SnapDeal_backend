@@ -35,30 +35,22 @@ const getAllCart = async (req, res) => {
 };
 
 const createCart = async (req, res) => {
-  const data = req.body;
-  const productId = req.body.productId
-  
   try {
-    res.status(200).send({ status: "succss", msg: "added", data: { data } });
+
+     const userId = req.body.userId
+     const {email} = req.body
+     const userIdInUserModel = await UserModel.find({email})
+     const userIdWhichIsStoreInUserModel   = userIdInUserModel[0]._id.toString()
+     if(userIdWhichIsStoreInUserModel!==userId){
+      return res.status(401).send({status:"fail",msg:"You are not authorized user"})
+     }
+     const cartData = new CartModel(req.body)
+     await cartData.save()
+     res.status(200).send({status:"success", msg:"Cart added successfully",data:{cartData}})
   } catch (error) {
-    res.status(400).send({ status: "fail", msg: error.message });
+      res.status(400).send({ status:"fail", msg: error.message });
+
   }
-  // try {
-
-  //    const userId = req.body.userId
-  //    const {email} = req.body
-  //    const userIdInUserModel = await UserModel.find({email})
-  //    const userIdWhichIsStoreInUserModel   = userIdInUserModel[0]._id.toString()
-  //    if(userIdWhichIsStoreInUserModel!==userId){
-  //     return res.status(401).send({status:"fail",msg:"You are not authorized user"})
-  //    }
-  //    const cartData = new CartModel(req.body)
-  //    await cartData.save()
-  //    res.status(200).send({status:"success", msg:"Cart added successfully",data:{cartData}})
-  // } catch (error) {
-  //     res.status(400).send({ status:"fail", msg: error.message });
-
-  // }
 };
 
 const updateCart = async (req, res) => {
