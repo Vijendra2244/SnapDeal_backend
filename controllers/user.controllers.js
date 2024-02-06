@@ -53,6 +53,11 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const cookiesOption = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    };
 
     const findUserWithMail = await UserModel.findOne({ email });
 
@@ -69,8 +74,8 @@ const loginUser = async (req, res) => {
     const access_token = await findUserWithMail.generateAccessToken();
     const refresh_token = await findUserWithMail.generateRefreshToken();
 
-    res.cookie("access_token", access_token);
-    res.cookie("refresh_token", refresh_token);
+    res.cookie("access_token", access_token, cookiesOption);
+    res.cookie("refresh_token", refresh_token, cookiesOption);
 
     res.status(200).send({
       status: "success",

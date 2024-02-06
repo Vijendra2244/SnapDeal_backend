@@ -14,13 +14,7 @@ const PORT = process.env.PORT;
 const app = express();
 
 app.use(express.json());
-app.use(
-  cookieParser({
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  })
-);
+app.use(cookieParser());
 app.use(
   cors({
     origin: [
