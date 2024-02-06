@@ -10,11 +10,11 @@ const { auth } = require("../middleware/auth.middleware");
 
 const productRouter = express.Router();
 
-productRouter.route("/").get(auth, getAllProducts);
-// productRouter
-//   .route("/create")
-//   .post(upload.single("productImage"), auth, createdProducts);
-// productRouter.route("/updateProduct/:id").patch(auth, updateProducts);
-// productRouter.route("/deleteProduct/:id").delete(auth, deleteProduct);
+productRouter.route("/").get(getAllProducts);
+productRouter
+  .route("/create")
+  .post(upload.single("productImage"), auth, createdProducts);
+productRouter.route("/updateProduct/:id").patch(auth, updateProducts);
+productRouter.route("/deleteProduct/:id").delete(auth, deleteProduct);
 
 module.exports = { productRouter };

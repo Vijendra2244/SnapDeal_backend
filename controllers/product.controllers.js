@@ -3,7 +3,8 @@ const { uploadOnCloudinary } = require("../utils/cloudinary.utils");
 
 const getAllProducts = async (req, res) => {
   try {
-    const products = await ProductModel.find();
+    const query = req.query
+    const products = await ProductModel.find(query);
     res
       .status(200)
       .send({

@@ -52,8 +52,7 @@ const auth = async (req, res, next) => {
           );
         }
       } else {
-        req.body.userId = decoded.userId;
-        req.body.username = decoded.username;
+         req.user = decoded
         next();
       }
     });

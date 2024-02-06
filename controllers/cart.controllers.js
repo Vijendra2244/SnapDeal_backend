@@ -1,126 +1,94 @@
 const { CartModel } = require("../models/cart.models");
-const { UserModel } = require("../models/user.models");
+const mongoose = require("mongoose");
+const { ProductModel } = require("../models/product.models");
 
-const getAllCart = async (req, res) => {
+const getUserAllCartData = async (req, res) => {
+  const userDetails = req.user;
   try {
-    const userId = req.body.userId;
-    console.log(userId)
+    const cartDataConnection = await CartModel.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(userDetails.userId),
+          isRemove: false,
+        },
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "productId",
+          foreignField: "_id",
+          as: "productInfo",
+        },
+      },
+      {
+        $unwind: {
+          path: "$productInfo",
+        },
+      },
+    ]).exec();
 
-    const findUserIdInCartModel = await CartModel.find({ userId });
-
-    // if (findUserIdInCartModel.length === 0) {
-    //   return res
-    //     .status(401)
-    //     .send({
-    //       status: "fail",
-    //       msg: "You need to add your cart in cartModel",
-    //     });
-    // }
-
-    const currentUserId = findUserIdInCartModel[0].userId;
-    if (currentUserId !== userId) {
-      return res
-        .status(400)
-        .send({
-          status: "fail",
-          msg: "You are not authorized to get other user's data",
-        });
-    }
-    const cartData = await CartModel.find();
-    res
-      .status(200)
-      .send({ status: "success", msg: "Get all cart", data: { cartData } });
+    return res.status(200).send({
+      status: "success",
+      msg: "user cart data which is store in cart model",
+      userProduct: cartDataConnection,
+    });
   } catch (error) {
-    res.status(400).send({ status: "fail", msg: error.message });
+    return res
+      .status(401)
+      .send({ status: "fail", msg: "cartData error", error: error.message });
   }
 };
 
-const createCart = async (req, res) => {
+const addCartInUserCartModel = async (req, res) => {
+  const { productId } = req.body;
+  const userDetails = req.user;
   try {
-
-     const userId = req.body.userId
-     const {email} = req.body
-     const userIdInUserModel = await UserModel.find({email})
-     const userIdWhichIsStoreInUserModel   = userIdInUserModel[0]._id.toString()
-     if(userIdWhichIsStoreInUserModel!==userId){
-      return res.status(401).send({status:"fail",msg:"You are not authorized user"})
-     }
-     const cartData = new CartModel(req.body)
-     await cartData.save()
-     res.status(200).send({status:"success", msg:"Cart added successfully",data:{cartData}})
-  } catch (error) {
-      res.status(400).send({ status:"fail", msg: error.message });
-
-  }
-};
-
-const updateCart = async (req, res) => {
-  try {
-    const userId = req.body.userId;
-    const { id } = req.params;
-    const data = req.body;
-
-    const findCartToUpdate = await CartModel.findById({ _id: id });
-
-    if (!findCartToUpdate) {
-      return res
-        .status(401)
-        .send({ status: "fail", msg: "Cart not found, please add cart" });
-    }
-
-    if (userId !== findCartToUpdate.userId) {
+    const productExistOrNot = await ProductModel.exists({
+      _id: new mongoose.Types.ObjectId(productId),
+    });
+    if (!productExistOrNot) {
       return res
         .status(400)
-        .send({
-          status: "fail",
-          msg: "You are not authorized to update this data",
-        });
+        .send({status:"fail", msg: "User product is not available" });
+    }
+    const availableCartInModelOrNot = await CartModel.findOne({
+      productId: new mongoose.Types.ObjectId(productId),
+      userId: new mongoose.Types.ObjectId(userDetails.userId),
+    });
+
+    if (availableCartInModelOrNot) {
+      if (availableCartInModelOrNot.isRemove) {
+        const updatedData = await CartModel.findByIdAndUpdate(
+          { _id: availableCartInModelOrNot._id },
+          { isRemove: false }
+        );
+        return res
+          .status(201)
+          .send({status:"success", msg: "products data add in cart successfully", productsData: updatedData });
+      } else {
+        return res
+          .status(400)
+          .send({status:"fail", msg: "product available all ready in cart" });
+      }
     }
 
-    const updateData = await CartModel.findByIdAndUpdate({ _id: id }, data);
-
-    res
+    const addProductToCart = new CartModel({
+      userId: new mongoose.Types.ObjectId(userDetails.userId),
+      productId: new mongoose.Types.ObjectId(productExistOrNot._id),
+      isRemove:false
+    });
+    await addProductToCart.save();
+    return res
       .status(201)
-      .send({
-        status: "success",
-        msg: "Cart updated successfully",
-        data: { updateData },
-      });
+      .send({status:"success", msg: "product added", productData: addProductToCart });
   } catch (error) {
-    res.status(400).send({ status: "fail", msg: error.message });
-  }
-};
-
-const deleteCart = async (req, res) => {
-  try {
-    const userId = req.body.userId;
-    const { id } = req.params;
-
-    const findCartToDelete = await CartModel.findById(id);
-
-    if (!findCartToDelete) {
-      return res.status(404).send({ status: "fail", msg: "Cart not found" });
-    }
-
-    if (userId !== findCartToDelete.userId.toString()) {
-      return res
-        .status(403)
-        .send({
-          status: "fail",
-          msg: "You are not authorized to delete this cart",
-        });
-    }
-
-    await CartModel.findByIdAndDelete(id);
-    res
-      .status(200)
-      .send({ status: "success", msg: "Cart deleted successfully" });
-  } catch (error) {
-    res.status(400).send({ status: "fail", msg: error.message });
+    return res
+      .status(401)
+      .send({status:"fail", msg: "addToCart error", error: error.message });
   }
 };
 
 
 
 
-module.exports = { getAllCart, createCart, updateCart, deleteCart };
+module.exports = { getUserAllCartData ,addCartInUserCartModel };
