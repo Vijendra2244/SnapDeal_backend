@@ -44,7 +44,7 @@ const registerUser = async (req, res) => {
     await user.save();
     res
       .status(200)
-      .send({ status: "success", msg: "User has been created successfully" });
+      .send({ status: "success", msg: "User has been created successfully" ,data:{avatar:avatar.url} });
   } catch (error) {
     res.status(400).send({ status: "fail", msg: error.message });
   }
