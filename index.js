@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const { productRouter } = require("./routes/product.routes");
 const { auth } = require("./middleware/auth.middleware");
 const { cartRouter } = require("./routes/cart.routes");
+const { google } = require("googleapis");
 
 const PORT = process.env.PORT;
 
@@ -33,6 +34,71 @@ app.get("/", (req, res) => {
     res.status(400).send({ status: "fail", err: error.message });
   }
 });
+
+//Google Oauth
+
+const clientId = process.env.CLIENT_ID;
+const clientSecret = process.env.CLIENT_SECRET;
+const scopes = ["https://www.googleapis.com/auth/userinfo.email"];
+const redirectUrl = "http://localhost:8080/google/callback";
+app.get("/login", async (req, res) => {
+  try {
+    const authUrl = getAuthUrl();
+    res.redirect(authUrl);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+app.get("/google/callback", async (req, res) => {
+  const code = req.query.code;
+  try {
+    const tokens = await exchangeCodeForTokens(code);
+    const email = await getUserEmail(tokens.access_token);
+    res.send({ tokens, email });
+  } catch (error) {
+    console.error("Error exchanging code for tokens:", error);
+    res.status(500).send("Error occurred during authentication");
+  }
+});
+
+async function exchangeCodeForTokens(code) {
+  const oauth2Client = new google.auth.OAuth2(
+    clientId,
+    clientSecret,
+    redirectUrl
+  );
+  const { tokens } = await oauth2Client.getToken(code);
+  oauth2Client.setCredentials(tokens);
+  return tokens;
+}
+
+async function getUserEmail(accessToken) {
+  const oauth2Client = new google.auth.OAuth2(
+    clientId,
+    clientSecret,
+    redirectUrl
+  );
+  oauth2Client.setCredentials({ access_token: accessToken });
+
+  const userInfo = google.oauth2({ version: "v2", auth: oauth2Client });
+  const { data } = await userInfo.userinfo.get();
+
+  return data.email || "";
+}
+
+function getAuthUrl() {
+  const oauth2Client = new google.auth.OAuth2(
+    clientId,
+    clientSecret,
+    redirectUrl
+  );
+  const authUrl = oauth2Client.generateAuthUrl({
+    access_type: "offline",
+    scope: scopes,
+  });
+  return authUrl;
+}
 
 app.use("/users", userRouter);
 app.use("/products", productRouter);
