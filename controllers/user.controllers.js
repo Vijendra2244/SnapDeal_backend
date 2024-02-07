@@ -80,6 +80,7 @@ const loginUser = async (req, res) => {
     res.status(200).send({
       status: "success",
       msg: "User login successfully",
+      avatar:findUserWithMail.avatar
     });
   } catch (error) {
     res.status(400).send({ status: "fail", msg: error.message });
