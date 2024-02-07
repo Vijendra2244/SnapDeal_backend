@@ -40,7 +40,8 @@ app.get("/", (req, res) => {
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const scopes = ["https://www.googleapis.com/auth/userinfo.email"];
-const redirectUrl = "http://localhost:8080/google/callback";
+const redirectUrl =
+  "https://snapdealbackend-production.up.railway.app/google/callback";
 app.get("/login", async (req, res) => {
   try {
     const authUrl = getAuthUrl();
