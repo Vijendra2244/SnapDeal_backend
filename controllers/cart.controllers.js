@@ -84,11 +84,26 @@ const addCartInUserCartModel = async (req, res) => {
   } catch (error) {
     return res
       .status(401)
-      .send({status:"fail", msg: "addToCart error", error: error.message });
+      .send({status:"fail", msg: "error while adding cart in cart model", error: error.message });
   }
 };
 
 
+const deleteCartInCartModel=async(req,res)=>{
+  const userDetails=req.user;
+  const {productId}=req.body
+  try {
+      const availableCartInModel=await CartModel.exists({productId:new mongoose.Types.ObjectId(productId),userId:new mongoose.Types.ObjectId(userDetails.userId),isRemove:false})
+      if(!availableCartInModel){
+          return res.status(400).send({msg:"product is not available in collection"})
+      }
+      const DeleteCart=await CartModel.findByIdAndUpdate({_id:availableCartInModel._id},{isRemove:true})
+      return res.status(200).send({status:"success",msg:"product is deleted in cart",deletedProduct:productId})
+  } catch (error) {
+      return res.status(401).send({status:"success",msg:"error while deleting cart",error:error.message})
+  }
+}
 
 
-module.exports = { getUserAllCartData ,addCartInUserCartModel };
+
+module.exports = { getUserAllCartData ,addCartInUserCartModel ,deleteCartInCartModel};
