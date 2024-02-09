@@ -4,6 +4,7 @@ const {
   createdProducts,
   updateProducts,
   deleteProduct,
+  getProductById,
 } = require("../controllers/product.controllers");
 const { upload } = require("../middleware/multer.middleware");
 const { auth } = require("../middleware/auth.middleware");
@@ -16,5 +17,6 @@ productRouter
   .post(upload.single("productImage"), auth, createdProducts);
 productRouter.route("/updateProduct/:id").patch(auth, updateProducts);
 productRouter.route("/deleteProduct/:id").delete(auth, deleteProduct);
+productRouter.route("/getById/:id").get(getProductById);
 
 module.exports = { productRouter };

@@ -17,6 +17,25 @@ const getAllProducts = async (req, res) => {
   }
 };
 
+const getProductById = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const product = await ProductModel.findById(productId);
+    if (!product) {
+     
+      return res.status(404).send({ status: "fail", msg: "Product not found" });
+    }
+    res.status(200).send({
+      status: "success",
+      msg: "Get product by ID",
+      data: { product },
+    });
+  } catch (error) {
+   
+    res.status(400).send({ status: "fail", msg: error.message });
+  }
+};
+
 const createdProducts = async (req, res) => {
   try {
     const productImageLocalPath = req.file?.path;
@@ -92,4 +111,5 @@ module.exports = {
   createdProducts,
   updateProducts,
   deleteProduct,
+  getProductById
 };
