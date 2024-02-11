@@ -9,6 +9,8 @@ const { productRouter } = require("./routes/product.routes");
 const { auth } = require("./middleware/auth.middleware");
 const { cartRouter } = require("./routes/cart.routes");
 const { google } = require("googleapis");
+const { UserModel } = require("./models/user.models");
+const { GoogleModel } = require("./models/google.models");
 
 const PORT = process.env.PORT;
 
@@ -42,6 +44,7 @@ const clientSecret = process.env.CLIENT_SECRET;
 const scopes = ["https://www.googleapis.com/auth/userinfo.email"];
 const redirectUrl =
   "https://snapdealbackend-production.up.railway.app/google/callback";
+// const redirectUrl = "http://localhost:8080/google/callback";
 app.get("/login", async (req, res) => {
   try {
     const authUrl = getAuthUrl();
@@ -56,7 +59,13 @@ app.get("/google/callback", async (req, res) => {
   try {
     const tokens = await exchangeCodeForTokens(code);
     const email = await getUserEmail(tokens.access_token);
-    res.send({ tokens, email });
+    const userAuthDetail = new GoogleModel({ email });
+    await userAuthDetail.save();
+    res.body = email;
+    res.send({
+      status: "success",
+      msg: "User login successfully with google Oauth",
+    });
   } catch (error) {
     console.error("Error exchanging code for tokens:", error);
     res.status(500).send("Error occurred during authentication");
