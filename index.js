@@ -11,6 +11,7 @@ const { cartRouter } = require("./routes/cart.routes");
 const { google } = require("googleapis");
 const { UserModel } = require("./models/user.models");
 const { GoogleModel } = require("./models/google.models");
+const { orderRouter } = require("./routes/order.routes");
 
 const PORT = process.env.PORT;
 
@@ -62,7 +63,7 @@ app.get("/google/callback", async (req, res) => {
     const userAuthDetail = new GoogleModel({ email });
     await userAuthDetail.save();
     req.body = email;
-    res.redirect("/https://snapdeal0101.netlify.app/");
+    res.redirect("/");
   } catch (error) {
     console.error("Error exchanging code for tokens:", error);
     res.status(500).send("Error occurred during authentication");
@@ -110,6 +111,7 @@ function getAuthUrl() {
 app.use("/users", userRouter);
 app.use("/products", productRouter);
 app.use("/carts", auth, cartRouter);
+app.use("/payment",orderRouter)
 
 app.listen(PORT, () => {
   try {
