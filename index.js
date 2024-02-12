@@ -62,7 +62,7 @@ app.get("/google/callback", async (req, res) => {
     const userAuthDetail = new GoogleModel({ email });
     await userAuthDetail.save();
     req.body = email;
-    res.redirect("https://snapdeal0101.netlify.app/")
+    res.redirect("/https://snapdeal0101.netlify.app/");
   } catch (error) {
     console.error("Error exchanging code for tokens:", error);
     res.status(500).send("Error occurred during authentication");
