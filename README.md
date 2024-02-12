@@ -486,3 +486,25 @@ To get started with this backend, follow these steps:
 - Upon successful upload, the function returns the Cloudinary response containing details about the uploaded file.
 
 
+### Razorpay integration
+
+
+ - Endpoint: /payment/checkout
+ - Method: POST
+ - Description: Initiates a payment request with Razorpay.
+ - Request Body:
+ - name: Name of the product or service.
+ - amount: Amount to be charged (in INR).
+ - Response: JSON containing the Razorpay order details.
+
+
+ - Endpoint: /payment/verification
+ - Method: POST
+ - Description: Verifies the payment after the user completes the payment process on the Razorpay  - checkout page.
+ - Request Body:
+ - razorpay_payment_id: ID of the payment received from Razorpay.
+ - razorpay_order_id: ID of the order received from Razorpay.
+ - razorpay_signature: Signature received from Razorpay for verification.
+ - Response:
+ - If the payment is valid, the user is redirected to a success page.
+ - If the payment is invalid, the user is redirected to an error page. 
