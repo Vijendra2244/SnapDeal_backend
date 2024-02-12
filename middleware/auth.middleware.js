@@ -6,8 +6,7 @@ dotenv.config();
 const auth = async (req, res, next) => {
   const access_token = req.cookies["access_token"];
   const refresh_token = req.cookies["refresh_token"];
-  console.log(req.cookies)
-  console.log(access_token)
+  console.log(req.body)
   try {
     const isBlackListedToken = await BlackListModel.findOne({
       access_token: access_token,

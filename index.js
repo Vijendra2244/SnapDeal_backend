@@ -44,7 +44,7 @@ const clientSecret = process.env.CLIENT_SECRET;
 const scopes = ["https://www.googleapis.com/auth/userinfo.email"];
 const redirectUrl =
   "https://snapdealbackend-production.up.railway.app/google/callback";
-// const redirectUrl = "http://localhost:8080/google/callback";
+
 app.get("/login", async (req, res) => {
   try {
     const authUrl = getAuthUrl();
@@ -61,11 +61,8 @@ app.get("/google/callback", async (req, res) => {
     const email = await getUserEmail(tokens.access_token);
     const userAuthDetail = new GoogleModel({ email });
     await userAuthDetail.save();
-    res.body = email;
-    res.send({
-      status: "success",
-      msg: "User login successfully with google Oauth",
-    });
+    req.body = email;
+    res.redirect("https://snapdeal0101.netlify.app/")
   } catch (error) {
     console.error("Error exchanging code for tokens:", error);
     res.status(500).send("Error occurred during authentication");
