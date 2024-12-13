@@ -4,7 +4,7 @@ const { paymentCheckout, paymentVerification } = require("../controllers/order.c
 const orderRouter = express.Router()
 
 
-// orderRouter.route("/checkout").post(paymentCheckout)
-// orderRouter.route("/verification").post(paymentVerification)
+orderRouter.route("/checkout").post(paymentCheckout)
+orderRouter.route("/verification").post(paymentVerification)
 
 module.exports  ={orderRouter}
