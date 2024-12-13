@@ -23,7 +23,7 @@ app.use(
   cors({
     origin: [
       "http://127.0.0.1:5173",
-      "https://snapdealbackend-production.up.railway.app",
+      "https://snap-deal-backend.vercel.app",
       "https://snapdeal0101.netlify.app",
     ],
     credentials: true,
