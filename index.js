@@ -111,7 +111,7 @@ function getAuthUrl() {
 app.use("/users", userRouter);
 app.use("/products", productRouter);
 app.use("/carts", auth, cartRouter);
-app.use("/payment",orderRouter)
+// app.use("/payment",orderRouter)
 
 app.listen(PORT, () => {
   try {
