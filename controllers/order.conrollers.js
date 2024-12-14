@@ -4,14 +4,12 @@
 // const Razorpay = require("razorpay");
 // const { OrderModel } = require("../models/order.models");
 
-
 // //razorpay configuaration
 
 // const razorpay = new Razorpay({
 //   key_id: process.env.RAZORPAY_KEY_ID,
 //   key_secret: process.env.RAZORPAY_KEY_SECRET,
 // });
-
 
 // const paymentCheckout = async(req, res) => {
 //   const { name, amount } = req.body;
@@ -51,7 +49,6 @@
 // }
 // module.exports = {paymentCheckout,paymentVerification};
 
-
 const dotenv = require("dotenv");
 dotenv.config();
 const crypto = require("crypto");
@@ -69,9 +66,9 @@ const paymentCheckout = async (req, res) => {
     console.log("Payment checkout initiated");
     const { name, amount } = req.body;
     console.log(`Received request with name: ${name}, amount: ${amount}`);
-
+    const newNum = Number(amount);
     const order = await razorpay.orders.create({
-      amount: Number(amount * 100),
+      amount: newNum * 100,
       currency: "INR",
     });
     console.log("Order created on Razorpay:", order);
@@ -86,14 +83,17 @@ const paymentCheckout = async (req, res) => {
     res.json({ order });
   } catch (error) {
     console.error("Error in paymentCheckout:", error);
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
 const paymentVerification = async (req, res) => {
   try {
     console.log("Payment verification initiated");
-    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
+      req.body;
     console.log("Received verification data:", {
       razorpay_payment_id,
       razorpay_order_id,
@@ -128,14 +128,18 @@ const paymentVerification = async (req, res) => {
       );
 
       console.log("Database updated successfully");
-      res.redirect(`http://localhost:5173/success?payment_id=${razorpay_order_id}`);
+      res.redirect(
+        `http://localhost:5173/success?payment_id=${razorpay_order_id}`
+      );
     } else {
       console.warn("Invalid payment signature. Redirecting to failure page.");
       res.redirect("https://snapdeal0101.netlify.app/");
     }
   } catch (error) {
     console.error("Error in paymentVerification:", error);
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
