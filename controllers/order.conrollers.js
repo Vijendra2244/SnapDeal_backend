@@ -76,7 +76,7 @@ const paymentCheckout = async (req, res) => {
     await OrderModel.create({
       order_id: order.id,
       name: name,
-      amount: amount,
+      amount: newNum,
     });
     console.log("Order saved to database");
 
