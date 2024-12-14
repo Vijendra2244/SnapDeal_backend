@@ -72,7 +72,7 @@ const paymentCheckout = async (req, res) => {
       currency: "INR",
     });
     console.log("Order created on Razorpay:", order);
-
+  console.log(typeof(newNum) ,"number type checking")
     await OrderModel.create({
       order_id: order.id,
       name: name,
