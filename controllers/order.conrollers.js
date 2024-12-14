@@ -66,13 +66,14 @@ const paymentCheckout = async (req, res) => {
     console.log("Payment checkout initiated");
     const { name, amount } = req.body;
     console.log(`Received request with name: ${name}, amount: ${amount}`);
-    const newNum = Number(amount);
+    const newNum = Math.round(Number(amount) * 100);
+    console.log(typeof newNum, "number type checking"); // Debugging type
     const order = await razorpay.orders.create({
-      amount: newNum * 100,
+      amount: newNum,
       currency: "INR",
     });
     console.log("Order created on Razorpay:", order);
-  console.log(typeof(newNum) ,"number type checking")
+  // console.log(typeof(newNum) ,"number type checking")
     await OrderModel.create({
       order_id: order.id,
       name: name,
